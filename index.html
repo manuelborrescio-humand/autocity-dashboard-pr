@@ -291,7 +291,7 @@ thead th {
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
-tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; }
+tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: #fafbff; }
 .pct-cell { display: flex; align-items: center; gap: 10px; }
@@ -447,8 +447,16 @@ tbody tr:hover td { background: #fafbff; }
     <!-- Detalle por colaborador -->
     <div class="section-header">Detalle por colaborador</div>
     <div class="table-card">
-      <table>
-        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>Cal. objetivos</th><th>Cal. comportamientos</th></tr></thead>
+      <table style="table-layout:fixed;width:100%;">
+        <colgroup>
+          <col style="width:22%">
+          <col style="width:20%">
+          <col style="width:22%">
+          <col style="width:12%">
+          <col style="width:12%">
+          <col style="width:12%">
+        </colgroup>
+        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>Objetivos</th><th>Comportamientos</th></tr></thead>
         <tbody id="tbColaboradores"></tbody>
       </table>
     </div>
