@@ -312,12 +312,33 @@ tbody tr:hover td { background: #fafbff; }
 .area-tag { font-size: 11px; color: var(--brand); background: var(--brand-light); padding: 2px 7px; border-radius: 4px; font-weight: 500; }
 
 .empty-state { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 13px; }
+.dim-bar-wrap { display: flex; gap: 3px; height: 8px; border-radius: 4px; overflow: hidden; width: 120px; }
+.dim-bar-seg { height: 100%; transition: width 0.4s ease; }
+.dim-avg { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--brand); }
+.dim-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); }
 
 /* detail table */
 .detail-section { margin-bottom: 1.75rem; }
 
 /* no data */
 #no-data { display: none; }
+
+/* tabs */
+.tab-nav { display: flex; gap: 2px; }
+.tab-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--text-secondary); background: transparent; border: none; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
+.tab-btn:hover { background: var(--brand-light); color: var(--brand); }
+.tab-btn.active { background: var(--brand-light); color: var(--brand); font-weight: 500; }
+
+/* needs tab */
+.needs-group { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-card); overflow: hidden; }
+.needs-group-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.needs-list { padding: 4px 0; }
+.need-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.need-item:last-child { border-bottom: none; }
+.need-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; width: 16px; text-align: center; }
+.need-done .need-icon { color: var(--l-text); }
+.need-pending .need-icon { color: var(--text-muted); }
+.need-done { background: #fafffe; }
 
 /* animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -356,7 +377,10 @@ tbody tr:hover td { background: #fafbff; }
     <div class="topbar-left">
       <span class="topbar-brand">Autocity</span>
       <div class="topbar-sep"></div>
-      <span class="topbar-title">Reporte de desempeño</span>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('needs')">Necesidades del cliente</button>
+      </div>
     </div>
     <div class="topbar-right">
       <span class="cycle-badge" id="cycleBadge">Ciclo 2026</span>
@@ -364,7 +388,8 @@ tbody tr:hover td { background: #fafbff; }
     </div>
   </div>
 
-  <div class="main">
+  <!-- ══ TAB: DASHBOARD ══ -->
+  <div id="tab-dashboard" class="main">
     <!-- Filters -->
     <div class="filters-bar">
       <span class="filter-label">Filtrar por</span>
@@ -390,6 +415,15 @@ tbody tr:hover td { background: #fafbff; }
         <div class="legend" id="legComp"></div>
         <div style="position:relative;height:190px;"><canvas id="chartComp" role="img" aria-label="Distribución de calificación de comportamientos por escala"></canvas></div>
       </div>
+    </div>
+
+    <!-- Desglose por dimensión de comportamientos -->
+    <div class="section-header">Calificación por dimensión de comportamientos</div>
+    <div class="table-card" style="margin-bottom:1.75rem;">
+      <table>
+        <thead><tr><th>Dimensión</th><th>Preguntas</th><th>Promedio</th><th>No logrado</th><th>Logrado en parte</th><th>Logrado</th><th>Superado</th></tr></thead>
+        <tbody id="tbDimensiones"></tbody>
+      </table>
     </div>
 
     <!-- Avance por área -->
@@ -419,11 +453,75 @@ tbody tr:hover td { background: #fafbff; }
       </table>
     </div>
   </div>
+
+  <!-- ══ TAB: NECESIDADES ══ -->
+  <div id="tab-needs" class="main" style="display:none;">
+    <div style="max-width:760px;">
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Necesidades relevadas del cliente</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Extraídas de reuniones con Florencia Mansilla Montero y equipo Autocity — Ciclo 2026</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <div class="needs-group">
+          <div class="needs-group-title">Dashboard de desempeño</div>
+          <div class="needs-list">
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance general</strong> — Evaluados / total activos del ciclo.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Área</strong> — Agrupado por Agrupador Area, con filtro.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Departamento</strong> — Agrupado por Departamento, con filtro.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de objetivos</strong> — Escala 4 niveles usando progreso de pestaña Objetivos, promediado por persona.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Escala 4 niveles usando columnas 1–9 de Evaluación descendente.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Desglose por dimensión</strong> — Pasión comercial (1–3), Eficiencia (4–6), Servicio (7–9) con promedio y distribución.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Líder</strong> — Solo personas con Agrupador Puesto = LIDER.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Área y Departamento</strong> — Afectan todos los KPIs simultáneamente.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Resultados por jerarquía</strong> — Ver resultados agregados por gerencia/dirección, incluyendo reportes indirectos (no solo directos del líder).</div></div>
+          </div>
+        </div>
+
+        <div class="needs-group">
+          <div class="needs-group-title">Encuesta de clima (People Experience)</div>
+          <div class="needs-list">
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Múltiples filtros simultáneos</strong> — Hoy la plataforma solo permite aplicar un filtro a la vez en los resultados de clima.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Agrupación por gerencia/dirección</strong> — Ver resultados de toda una gerencia, no solo los reportes directos del líder.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Agrupación de subdimensiones</strong> — Agrupar preguntas de subdimensiones dentro de una misma dimensión para obtener un valor macro (ej. Liderazgo total = visión + cercanía + feedback).</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Export de datos crudos</strong> — Archivo descargable con respuestas anónimas por pregunta para trabajar externamente. Actualmente solo exporta el % agregado del tablero.</div></div>
+          </div>
+        </div>
+
+        <div class="needs-group">
+          <div class="needs-group-title">Módulo de aprendizaje</div>
+          <div class="needs-list">
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Notificaciones de recordatorio</strong> — Alertas automáticas (push o email) para usuarios con cursos pendientes.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Segmentación por puesto o fecha de ingreso</strong> — Asignar cursos automáticamente a nuevos empleados o a puestos específicos.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Registro de asistencia en capacitaciones en vivo</strong> — Para sesiones virtuales masivas de más de 100 personas. El marcaje actual es manual.</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;padding:12px 16px;background:var(--brand-light);border-radius:var(--radius-sm);border-left:3px solid var(--brand-mid);">
+        <div style="font-size:12px;color:var(--brand);font-weight:500;margin-bottom:4px;">Leyenda</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary);">
+          <span><span style="color:var(--l-text);font-weight:600;">✓ Implementado</span> — disponible en este dashboard</span>
+          <span><span style="color:var(--text-muted);font-weight:600;">○ Pendiente</span> — fuera del alcance actual o requiere desarrollo adicional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+function switchTab(tab) {
+  document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
+  document.getElementById('tab-needs').style.display = tab === 'needs' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
 let DB = { usuarios: [], evaluados: [], objetivos: [] };
 let charts = {};
 
@@ -607,6 +705,7 @@ function applyFilters() {
 function renderAll() {
   renderKPIs();
   renderCharts();
+  renderTablaDimensiones();
   renderTablaArea();
   renderTablaDepto();
   renderTablaColaboradores();
@@ -685,6 +784,68 @@ function renderCharts() {
   };
   cfg('chartObj',  vals(objDist));
   cfg('chartComp', vals(compDist));
+}
+
+const DIMENSIONES = [
+  { nombre: 'Pasión comercial', indices: [0,1,2], color: '#378add' },
+  { nombre: 'Eficiencia',       indices: [3,4,5], color: '#639922' },
+  { nombre: 'Servicio',         indices: [6,7,8], color: '#6f93eb' },
+];
+
+function renderTablaDimensiones() {
+  const evUsers = filtered.filter(u => u.estado === 'Finalizado' || u.estado === 'Finalizada');
+
+  if (!evUsers.length) {
+    document.getElementById('tbDimensiones').innerHTML =
+      `<tr><td colspan="7" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+    return;
+  }
+
+  document.getElementById('tbDimensiones').innerHTML = DIMENSIONES.map(dim => {
+    const dist = { 'No logrado':0,'Logrado en parte':0,'Logrado':0,'Superado':0 };
+    let sumAvg = 0, count = 0;
+
+    evUsers.forEach(u => {
+      const ev = DB.evaluados.find(e => e.nombre === u.nombre);
+      if (!ev || !ev.comportamientos.length) return;
+      const vals = dim.indices.map(i => ev.comportamientos[i]).filter(v => v != null);
+      if (!vals.length) return;
+      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      sumAvg += avg; count++;
+      dist[comportToLabel(avg)]++;
+    });
+
+    const total = Object.values(dist).reduce((a,b)=>a+b,0);
+    const globalAvg = count > 0 ? (sumAvg/count).toFixed(2) : '—';
+    const globalLabel = count > 0 ? comportToLabel(sumAvg/count) : null;
+
+    const pct = v => total > 0 ? Math.round(v/total*100) : 0;
+    const segColors = ['#e24b4a','#ef9f27','#639922','#378add'];
+    const segWidths = SCALE.map(l => pct(dist[l]));
+
+    const avgBadge = globalLabel
+      ? `<span class="badge ${badgeClass(globalLabel)}" style="font-family:'DM Mono',monospace;">${globalAvg}</span>`
+      : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:10px;height:10px;border-radius:2px;background:${dim.color};display:inline-block;flex-shrink:0;"></span>
+          <strong>${dim.nombre}</strong>
+        </div>
+      </td>
+      <td style="color:var(--text-muted);font-size:12px;">
+        <div class="dim-bar-wrap">
+          ${segColors.map((c,i) => `<div class="dim-bar-seg" style="background:${c};width:${segWidths[i]}%;"></div>`).join('')}
+        </div>
+      </td>
+      <td>${avgBadge}</td>
+      <td><span class="dim-count" style="color:var(--nl-text);">${dist['No logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['No logrado'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--lp-text);">${dist['Logrado en parte']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado en parte'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--l-text);">${dist['Logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--s-text);">${dist['Superado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Superado'])}%)</span></span></td>
+    </tr>`;
+  }).join('');
 }
 
 function renderTablaArea() {
