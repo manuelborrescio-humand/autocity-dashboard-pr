@@ -621,11 +621,11 @@ document.addEventListener('click', e => {
   if (dd && !dd.contains(e.target)) dd.classList.remove('active');
 });
 
-
+function switchTab(tab) {
   document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
   document.getElementById('tab-needs').style.display = tab === 'needs' ? 'block' : 'none';
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
 }
 
 let DB = { usuarios: [], evaluados: [], objetivos: [] };
