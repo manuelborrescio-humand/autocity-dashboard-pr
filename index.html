@@ -18,11 +18,11 @@
   --surface: #ffffff;
   --border: rgba(0,0,0,0.08);
   --border-strong: rgba(0,0,0,0.18);
-  /* Scale colors — monochrome ramp (darker = better) */
-  --nl-bg: #f6f4ed; --nl-text: #8a8a8a; --nl-chart: #d9d6cc;
-  --lp-bg: #eeeae0; --lp-text: #5a5a5a; --lp-chart: #a8a39a;
-  --l-bg:  #d9d5c8; --l-text:  #2a2a2a; --l-chart:  #555555;
-  --s-bg:  #1a1a1a; --s-text:  #ffffff; --s-chart:  #0a0a0a;
+  /* Scale colors — Terracota apagado (Arcilla → Bosque) */
+  --nl-bg: #f3e4df; --nl-text: #8a3f30; --nl-chart: #b86a5a;
+  --lp-bg: #f4ecdc; --lp-text: #85671e; --lp-chart: #c9a66b;
+  --l-bg:  #e6ead9; --l-text:  #4f5e34; --l-chart:  #7a8a5a;
+  --s-bg:  #dae1dc; --s-text:  #365447; --s-chart:  #365447;
   --shadow-card: 0 1px 0 rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.04);
   --shadow-hover: 0 2px 12px rgba(0,0,0,0.08);
   --radius: 4px;
@@ -340,10 +340,10 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
-.badge-nl { background: transparent; color: var(--text-muted); border: 1px solid rgba(0,0,0,0.15); }
-.badge-lp { background: transparent; color: var(--text-secondary); border: 1px dashed rgba(0,0,0,0.4); }
-.badge-l  { background: rgba(0,0,0,0.08); color: var(--text-primary); border: 1px solid transparent; }
-.badge-s  { background: var(--brand); color: #ffffff; border: 1px solid var(--brand); }
+.badge-nl { background: var(--nl-bg); color: var(--nl-text); border: 1px solid transparent; }
+.badge-lp { background: var(--lp-bg); color: var(--lp-text); border: 1px solid transparent; }
+.badge-l  { background: var(--l-bg);  color: var(--l-text); border: 1px solid transparent; }
+.badge-s  { background: var(--s-chart); color: #ffffff; border: 1px solid var(--s-chart); }
 .area-tag { font-family: var(--brand-sans); font-size: 10px; font-weight: 500; color: var(--text-secondary); background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 3px; letter-spacing: 0.05em; }
 
 .empty-state { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 13px; font-weight: 300; }
@@ -789,10 +789,10 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
 /* ══ SCORING ══ */
 const SCALE = ['No logrado','Logrado en parte','Logrado','Superado'];
 const SCALE_COLORS = {
-  'No logrado':      { bg: '#f6f4ed', text: '#8a8a8a', chart: '#d9d6cc' },
-  'Logrado en parte':{ bg: '#eeeae0', text: '#5a5a5a', chart: '#a8a39a' },
-  'Logrado':         { bg: '#d9d5c8', text: '#2a2a2a', chart: '#555555' },
-  'Superado':        { bg: '#1a1a1a', text: '#ffffff', chart: '#000000' },
+  'No logrado':      { bg: '#f3e4df', text: '#8a3f30', chart: '#b86a5a' },
+  'Logrado en parte':{ bg: '#f4ecdc', text: '#85671e', chart: '#c9a66b' },
+  'Logrado':         { bg: '#e6ead9', text: '#4f5e34', chart: '#7a8a5a' },
+  'Superado':        { bg: '#dae1dc', text: '#365447', chart: '#365447' },
 };
 
 function comportToLabel(avg) {
@@ -962,7 +962,7 @@ function renderTablaDimensiones() {
     const globalLabel = count > 0 ? comportToLabel(sumAvg/count) : null;
 
     const pct = v => total > 0 ? Math.round(v/total*100) : 0;
-    const segColors = ['#d9d6cc','#a8a39a','#555555','#000000'];
+    const segColors = ['#b86a5a','#c9a66b','#7a8a5a','#365447'];
     const segWidths = SCALE.map(l => pct(dist[l]));
 
     const avgBadge = globalLabel
