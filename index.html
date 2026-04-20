@@ -505,8 +505,30 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
           <div class="search-select-list" id="liderList"></div>
         </div>
       </div>
-      <select id="fArea"  onchange="applyFilters()"><option value="">Todas las áreas</option></select>
-      <select id="fDepto" onchange="applyFilters()"><option value="">Todos los departamentos</option></select>
+      <div class="search-select" id="areaDropdown">
+        <div class="search-select-trigger" onclick="toggleDropdown('area')">
+          <span id="areaLabel">Todas las áreas</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#636271" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-select-panel" id="areaPanel">
+          <div class="search-select-input-wrap">
+            <input type="text" id="areaSearch" placeholder="Buscar área..." oninput="filterDropdown('area')" onclick="event.stopPropagation()">
+          </div>
+          <div class="search-select-list" id="areaList"></div>
+        </div>
+      </div>
+      <div class="search-select" id="deptoDropdown">
+        <div class="search-select-trigger" onclick="toggleDropdown('depto')">
+          <span id="deptoLabel">Todos los departamentos</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#636271" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-select-panel" id="deptoPanel">
+          <div class="search-select-input-wrap">
+            <input type="text" id="deptoSearch" placeholder="Buscar departamento..." oninput="filterDropdown('depto')" onclick="event.stopPropagation()">
+          </div>
+          <div class="search-select-list" id="deptoList"></div>
+        </div>
+      </div>
     </div>
 
     <!-- KPI Cards -->
@@ -616,46 +638,76 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 let ALL_LIDERES = [];
+let ALL_AREAS = [];
+let ALL_DEPTOS = [];
 let selectedLider = '';
+let selectedArea = '';
+let selectedDepto = '';
 
-function toggleLiderDropdown() {
-  const dd = document.getElementById('liderDropdown');
+const DROPDOWN_CONFIG = {
+  lider: { allItems: () => ALL_LIDERES, selectedVar: () => selectedLider, defaultLabel: 'Todos los líderes', placeholder: 'Buscar líder...' },
+  area:  { allItems: () => ALL_AREAS,  selectedVar: () => selectedArea,  defaultLabel: 'Todas las áreas',    placeholder: 'Buscar área...' },
+  depto: { allItems: () => ALL_DEPTOS, selectedVar: () => selectedDepto, defaultLabel: 'Todos los departamentos', placeholder: 'Buscar departamento...' },
+};
+
+function toggleDropdown(key) {
+  const dd = document.getElementById(key === 'lider' ? 'liderDropdown' : key + 'Dropdown');
   const isActive = dd.classList.toggle('active');
   if (isActive) {
-    document.getElementById('liderSearch').value = '';
-    filterLideres();
-    document.getElementById('liderSearch').focus();
+    const searchId = key === 'lider' ? 'liderSearch' : key + 'Search';
+    document.getElementById(searchId).value = '';
+    filterDropdown(key);
+    document.getElementById(searchId).focus();
   }
 }
 
-function filterLideres() {
-  const q = document.getElementById('liderSearch').value.toLowerCase();
-  const list = document.getElementById('liderList');
-  const items = [{ value: '', label: 'Todos los líderes' }, ...ALL_LIDERES.map(l => ({ value: l, label: l }))];
-  const filtered = items.filter(i => i.label.toLowerCase().includes(q));
-  if (!filtered.length) {
+// keep old name working
+function toggleLiderDropdown() { toggleDropdown('lider'); }
+
+function filterDropdown(key) {
+  const cfg = DROPDOWN_CONFIG[key];
+  const searchId = key === 'lider' ? 'liderSearch' : key + 'Search';
+  const listId   = key === 'lider' ? 'liderList'   : key + 'List';
+  const q = document.getElementById(searchId).value.toLowerCase();
+  const list = document.getElementById(listId);
+  const items = [{ value: '', label: cfg.defaultLabel }, ...cfg.allItems().map(l => ({ value: l, label: l }))];
+  const results = items.filter(i => i.label.toLowerCase().includes(q));
+  const sel = cfg.selectedVar();
+  if (!results.length) {
     list.innerHTML = '<div class="search-select-empty">Sin resultados</div>';
     return;
   }
-  list.innerHTML = filtered.map(i =>
-    `<div class="search-select-item${selectedLider === i.value ? ' selected' : ''}" onclick="selectLider('${i.value.replace(/'/g,"\\'")}','${i.label.replace(/'/g,"\\'")}')">
-      ${i.label}
+  list.innerHTML = results.map(i =>
+    `<div class="search-select-item${sel === i.value ? ' selected' : ''}" onclick="selectDropdown('${key}','${i.value.replace(/'/g,"\\'")}','${i.label.replace(/'/g,"\\'")}')">
+      ${i.value === '' ? `<strong>${i.label}</strong>` : i.label}
     </div>`
   ).join('');
 }
 
-function selectLider(value, label) {
-  selectedLider = value;
-  document.getElementById('liderLabel').textContent = label || 'Todos los líderes';
-  const dd = document.getElementById('liderDropdown');
+// keep old name working
+function filterLideres() { filterDropdown('lider'); }
+
+function selectDropdown(key, value, label) {
+  const ddId = key === 'lider' ? 'liderDropdown' : key + 'Dropdown';
+  const labelId = key === 'lider' ? 'liderLabel' : key + 'Label';
+  const cfg = DROPDOWN_CONFIG[key];
+  if (key === 'lider') selectedLider = value;
+  else if (key === 'area') selectedArea = value;
+  else if (key === 'depto') selectedDepto = value;
+  document.getElementById(labelId).textContent = value ? label : cfg.defaultLabel;
+  const dd = document.getElementById(ddId);
   dd.classList.remove('active');
   dd.classList.toggle('has-value', value !== '');
   applyFilters();
 }
 
+function selectLider(value, label) { selectDropdown('lider', value, label); }
+
 document.addEventListener('click', e => {
-  const dd = document.getElementById('liderDropdown');
-  if (dd && !dd.contains(e.target)) dd.classList.remove('active');
+  ['liderDropdown','areaDropdown','deptoDropdown'].forEach(id => {
+    const dd = document.getElementById(id);
+    if (dd && !dd.contains(e.target)) dd.classList.remove('active');
+  });
 });
 
 function switchTab(tab) {
@@ -830,17 +882,11 @@ function getEvalData(nombre) {
 let filtered = [];
 
 function applyFilters() {
-  const a = document.getElementById('fArea').value;
-  const d = document.getElementById('fDepto').value;
   filtered = DB.usuarios.filter(u =>
     (!selectedLider || u.jefe === selectedLider) &&
-    (!a || u.area === a) &&
-    (!d || u.depto === d)
+    (!selectedArea  || u.area === selectedArea)  &&
+    (!selectedDepto || u.depto === selectedDepto)
   );
-  ['fArea','fDepto'].forEach(id => {
-    const el = document.getElementById(id);
-    el.classList.toggle('filter-active', el.value !== '');
-  });
   renderAll();
 }
 
@@ -1047,18 +1093,12 @@ function showDashboard() {
   selectedLider = '';
 
   ALL_LIDERES = [...new Set(DB.usuarios.map(u => u.jefe).filter(Boolean))].sort();
-  const areasSet  = [...new Set(DB.usuarios.map(u => u.area).filter(Boolean))].sort();
-  const deptosSet = [...new Set(DB.usuarios.map(u => u.depto).filter(Boolean))].sort();
+  ALL_AREAS   = [...new Set(DB.usuarios.map(u => u.area).filter(Boolean))].sort();
+  ALL_DEPTOS  = [...new Set(DB.usuarios.map(u => u.depto).filter(Boolean))].sort();
 
-  filterLideres();
-
-  const populate = (id, opts) => {
-    const el = document.getElementById(id);
-    el.innerHTML = '<option value="">' + el.options[0].text + '</option>';
-    opts.forEach(o => { const opt = document.createElement('option'); opt.value = o; opt.textContent = o; el.appendChild(opt); });
-  };
-  populate('fArea',  areasSet);
-  populate('fDepto', deptosSet);
+  filterDropdown('lider');
+  filterDropdown('area');
+  filterDropdown('depto');
 
   document.getElementById('screen-upload').style.display = 'none';
   document.getElementById('screen-dashboard').style.display = 'block';
@@ -1072,9 +1112,17 @@ function resetDashboard() {
   Object.values(charts).forEach(c => c.destroy());
   charts = {};
   selectedLider = '';
+  selectedArea  = '';
+  selectedDepto = '';
   ALL_LIDERES = [];
+  ALL_AREAS   = [];
+  ALL_DEPTOS  = [];
   document.getElementById('liderLabel').textContent = 'Todos los líderes';
+  document.getElementById('areaLabel').textContent  = 'Todas las áreas';
+  document.getElementById('deptoLabel').textContent = 'Todos los departamentos';
   document.getElementById('liderDropdown').classList.remove('active','has-value');
+  document.getElementById('areaDropdown').classList.remove('active','has-value');
+  document.getElementById('deptoDropdown').classList.remove('active','has-value');
   document.getElementById('fileInput').value = '';
   document.getElementById('loadingFill').style.width = '0%';
   document.getElementById('loadingBar').style.display = 'none';
