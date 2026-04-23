@@ -3,31 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 <title>Desempeño 2026 — Autocity</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --brand: #213478;
-  --brand-light: #eff2ff;
-  --brand-mid: #6f93eb;
-  --text-primary: #1a1a2e;
-  --text-secondary: #636271;
-  --text-muted: #9d9baa;
-  --bg: #f5f6f8;
+  /* Autocity brand — monochrome editorial */
+  --brand: #000000;
+  --brand-light: #f4f1ea;
+  --brand-mid: #2a2a2a;
+  --text-primary: #0a0a0a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #8a8a8a;
+  --bg: #f4f1ea;
   --surface: #ffffff;
-  --border: rgba(33,52,120,0.10);
-  --border-strong: rgba(33,52,120,0.18);
-  --nl-bg: #fcebeb; --nl-text: #a32d2d; --nl-chart: #e24b4a;
-  --lp-bg: #faeeda; --lp-text: #854f0b; --lp-chart: #ef9f27;
-  --l-bg:  #eaf3de; --l-text:  #3b6d11; --l-chart:  #639922;
-  --s-bg:  #e6f1fb; --s-text:  #185fa5; --s-chart:  #378add;
-  --shadow-card: 0 1px 3px rgba(33,52,120,0.06), 0 4px 16px rgba(33,52,120,0.04);
-  --shadow-hover: 0 4px 20px rgba(33,52,120,0.10);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.18);
+  /* Scale colors — Terracota apagado (Arcilla → Bosque) */
+  --nl-bg: #f3e4df; --nl-text: #8a3f30; --nl-chart: #b86a5a;
+  --lp-bg: #f4ecdc; --lp-text: #85671e; --lp-chart: #c9a66b;
+  --l-bg:  #e6ead9; --l-text:  #4f5e34; --l-chart:  #7a8a5a;
+  --s-bg:  #dae1dc; --s-text:  #365447; --s-chart:  #365447;
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-hover: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 4px;
+  --radius-sm: 3px;
+  --brand-serif: 'Playfair Display', Georgia, serif;
+  --brand-sans: 'Kanit', 'Helvetica Neue', Helvetica, sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); }
+html, body { height: 100%; font-family: var(--brand-sans); font-weight: 300; background: var(--bg); color: var(--text-primary); }
 
 /* ── UPLOAD SCREEN ── */
 #screen-upload {
@@ -40,33 +45,39 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   background: var(--bg);
 }
 .upload-logo {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--brand);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 3rem;
-  opacity: 0.7;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
 }
 .upload-title {
-  font-size: 28px;
-  font-weight: 300;
+  font-family: var(--brand-serif);
+  font-size: 40px;
+  font-weight: 400;
   color: var(--text-primary);
   text-align: center;
-  margin-bottom: 8px;
-  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+  letter-spacing: -0.8px;
 }
-.upload-title strong { font-weight: 600; }
+.upload-title strong { font-weight: 500; font-style: italic; }
 .upload-subtitle {
+  font-family: var(--brand-sans);
+  font-weight: 300;
   font-size: 14px;
   color: var(--text-secondary);
   text-align: center;
   margin-bottom: 3rem;
+  letter-spacing: 0.02em;
 }
 .drop-zone {
   width: 100%;
   max-width: 480px;
-  border: 1.5px dashed var(--border-strong);
+  border: 1.5px dashed rgba(0,0,0,0.3);
   border-radius: var(--radius);
   padding: 3rem 2rem;
   text-align: center;
@@ -76,27 +87,32 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   position: relative;
 }
 .drop-zone:hover, .drop-zone.drag-over {
-  border-color: var(--brand-mid);
-  background: var(--brand-light);
+  border-color: var(--brand);
+  border-style: solid;
+  background: #ffffff;
 }
 .drop-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 16px;
-  background: var(--brand-light);
-  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 18px;
+  background: #000000;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.drop-icon svg { width: 22px; height: 22px; stroke: var(--brand); fill: none; stroke-width: 1.8; stroke-linecap: round; }
+.drop-icon svg { width: 22px; height: 22px; stroke: #ffffff; fill: none; stroke-width: 1.6; stroke-linecap: round; }
 .drop-label {
+  font-family: var(--brand-sans);
   font-size: 15px;
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 6px;
+  letter-spacing: 0.02em;
 }
 .drop-hint {
+  font-family: var(--brand-sans);
+  font-weight: 300;
   font-size: 13px;
   color: var(--text-muted);
 }
@@ -104,6 +120,7 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   color: var(--brand);
   font-weight: 500;
   cursor: pointer;
+  border-bottom: 1px solid var(--brand);
 }
 #fileInput { display: none; }
 .upload-note {
@@ -145,10 +162,11 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
 #screen-dashboard { display: none; min-height: 100vh; }
 
 .topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: #000000;
+  color: #ffffff;
+  border-bottom: none;
   padding: 0 2rem;
-  height: 56px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -156,38 +174,46 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   top: 0;
   z-index: 10;
 }
-.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-left { display: flex; align-items: center; gap: 24px; }
 .topbar-brand {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--brand);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
 }
-.topbar-sep { width: 1px; height: 16px; background: var(--border-strong); }
-.topbar-title { font-size: 14px; color: var(--text-secondary); font-weight: 400; }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-brand img {
+  height: 22px;
+  width: auto;
+  display: block;
+}
+.topbar-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.2); }
+.topbar-title { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 300; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
 .cycle-badge {
+  font-family: var(--brand-sans);
   font-size: 11px;
-  font-weight: 500;
-  background: var(--brand-light);
-  color: var(--brand);
-  padding: 4px 10px;
+  font-weight: 400;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: 4px 12px;
   border-radius: 999px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .btn-reset {
+  font-family: var(--brand-sans);
   font-size: 12px;
-  color: var(--text-muted);
+  font-weight: 300;
+  color: rgba(255,255,255,0.75);
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(255,255,255,0.25);
   background: transparent;
-  font-family: 'DM Sans', sans-serif;
   transition: all 0.15s;
+  white-space: nowrap;
 }
-.btn-reset:hover { background: var(--nl-bg); color: var(--nl-text); border-color: var(--nl-text); }
+.btn-reset:hover { background: rgba(255,255,255,0.08); color: #ffffff; border-color: rgba(255,255,255,0.5); }
 
 .main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
 
@@ -199,9 +225,10 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   margin-bottom: 1.75rem;
   align-items: center;
 }
-.filter-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-right: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-label { font-family: var(--brand-sans); font-size: 10px; color: var(--text-muted); font-weight: 500; margin-right: 4px; text-transform: uppercase; letter-spacing: 0.12em; }
 .filters-bar select {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--brand-sans);
+  font-weight: 300;
   font-size: 13px;
   color: var(--text-primary);
   background: var(--surface);
@@ -212,14 +239,14 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   outline: none;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23636271' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4a4a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   transition: border-color 0.15s;
 }
-.filters-bar select:hover { border-color: var(--brand-mid); }
-.filters-bar select:focus { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(111,147,235,0.15); }
-.filter-active { border-color: var(--brand) !important; color: var(--brand) !important; background-color: var(--brand-light) !important; }
+.filters-bar select:hover { border-color: var(--brand); }
+.filters-bar select:focus { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+.filter-active { border-color: var(--brand) !important; color: var(--brand) !important; background-color: var(--brand-light) !important; font-weight: 500 !important; }
 
 /* kpi grid */
 .kpi-grid {
@@ -237,14 +264,19 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   transition: box-shadow 0.2s;
 }
 .kpi-card:hover { box-shadow: var(--shadow-hover); }
-.kpi-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
-.kpi-value { font-size: 32px; font-weight: 300; color: var(--text-primary); letter-spacing: -1px; line-height: 1; font-family: 'DM Mono', monospace; }
-.kpi-value span { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
-.kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-.kpi-bar { height: 3px; background: var(--border); border-radius: 999px; margin-top: 12px; overflow: hidden; }
-.kpi-bar-fill { height: 100%; border-radius: 999px; background: var(--brand-mid); transition: width 0.5s ease; }
-.kpi-card.highlight { border-color: var(--brand-mid); background: var(--brand-light); }
-.kpi-card.highlight .kpi-value { color: var(--brand); }
+.kpi-label { font-family: var(--brand-sans); font-size: 10px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 14px; }
+.kpi-value { font-family: var(--brand-sans); font-size: 44px; font-weight: 500; color: var(--text-primary); letter-spacing: -1.5px; line-height: 1; }
+.kpi-value span { font-family: var(--brand-sans); font-size: 22px; font-weight: 400; color: var(--text-muted); margin-left: 2px; }
+.kpi-sub { font-family: var(--brand-sans); font-weight: 300; font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+.kpi-bar { height: 2px; background: rgba(0,0,0,0.08); border-radius: 999px; margin-top: 14px; overflow: hidden; }
+.kpi-bar-fill { height: 100%; border-radius: 999px; background: var(--brand); transition: width 0.5s ease; }
+.kpi-card.highlight { border-color: var(--brand); background-color: rgb(47, 47, 47); color: #ffffff; }
+.kpi-card.highlight .kpi-label { color: rgba(255,255,255,0.55); }
+.kpi-card.highlight .kpi-value { color: #ffffff; }
+.kpi-card.highlight .kpi-value span { color: rgba(255,255,255,0.5); }
+.kpi-card.highlight .kpi-sub { color: rgba(255,255,255,0.6); }
+.kpi-card.highlight .kpi-bar { background: rgba(255,255,255,0.15); }
+.kpi-card.highlight .kpi-bar-fill { background: #ffffff; }
 
 /* charts row */
 .charts-row {
@@ -262,15 +294,15 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   box-shadow: var(--shadow-card);
   padding: 1.25rem 1.5rem;
 }
-.card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-.card-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 1rem; }
+.card-title { font-family: var(--brand-sans); font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; letter-spacing: 0.02em; }
+.card-sub { font-family: var(--brand-sans); font-weight: 300; font-size: 12px; color: var(--text-muted); margin-bottom: 1rem; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
-.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--brand-sans); font-weight: 300; font-size: 11px; color: var(--text-secondary); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
 /* tables */
-.section-header { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+.section-header { font-family: var(--brand-sans); font-size: 10px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 10px; padding-left: 2px; }
 .table-card {
   background: var(--surface);
   border-radius: var(--radius);
@@ -279,45 +311,135 @@ html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(-
   overflow: hidden;
   margin-bottom: 1.75rem;
 }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table { width: 100%; border-collapse: collapse; font-family: var(--brand-sans); font-weight: 300; font-size: 13px; }
 thead th {
   text-align: left;
-  padding: 10px 16px;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 12px 16px;
+  font-family: var(--brand-sans);
+  font-size: 10px;
+  font-weight: 500;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.12em;
+  background: transparent;
+  border-bottom: 1.5px solid var(--brand);
 }
-tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; }
+tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 300; }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #fafbff; }
+tbody tr:hover td { background: rgba(0,0,0,0.02); }
 .pct-cell { display: flex; align-items: center; gap: 10px; }
-.mini-bar { height: 4px; width: 72px; background: var(--border); border-radius: 999px; overflow: hidden; flex-shrink: 0; }
-.mini-fill { height: 100%; border-radius: 999px; background: var(--brand-mid); }
-.pct-val { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--brand); min-width: 36px; }
+.mini-bar { height: 2px; width: 80px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden; flex-shrink: 0; }
+.mini-fill { height: 100%; border-radius: 999px; background: var(--brand); }
+.pct-val { font-family: var(--brand-sans); font-size: 13px; font-weight: 500; color: var(--brand); min-width: 40px; }
 .badge {
   display: inline-block;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  font-family: var(--brand-sans);
+  font-size: 10px;
   font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
-.badge-nl { background: var(--nl-bg); color: var(--nl-text); }
-.badge-lp { background: var(--lp-bg); color: var(--lp-text); }
-.badge-l  { background: var(--l-bg);  color: var(--l-text); }
-.badge-s  { background: var(--s-bg);  color: var(--s-text); }
-.area-tag { font-size: 11px; color: var(--brand); background: var(--brand-light); padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+.badge-nl { background: var(--nl-bg); color: var(--nl-text); border: 1px solid transparent; }
+.badge-lp { background: var(--lp-bg); color: var(--lp-text); border: 1px solid transparent; }
+.badge-l  { background: var(--l-bg);  color: var(--l-text); border: 1px solid transparent; }
+.badge-s  { background: var(--s-chart); color: #ffffff; border: 1px solid var(--s-chart); }
+.area-tag { font-family: var(--brand-sans); font-size: 10px; font-weight: 500; color: var(--text-secondary); background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 3px; letter-spacing: 0.05em; }
 
-.empty-state { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 13px; }
+.empty-state { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 13px; font-weight: 300; }
+.dim-bar-wrap { display: flex; gap: 2px; height: 8px; border-radius: 0; overflow: hidden; width: 140px; }
+.dim-bar-seg { height: 100%; transition: width 0.4s ease; }
+.dim-avg { font-family: var(--brand-sans); font-size: 13px; font-weight: 500; color: var(--brand); }
+.dim-count { font-family: var(--brand-sans); font-weight: 400; font-size: 12px; color: var(--text-secondary); }
 
 /* detail table */
 .detail-section { margin-bottom: 1.75rem; }
 
 /* no data */
 #no-data { display: none; }
+
+/* searchable dropdown */
+.search-select { position: relative; display: inline-block; }
+.search-select-trigger {
+  font-family: var(--brand-sans);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-width: 180px;
+  justify-content: space-between;
+  transition: border-color 0.15s;
+}
+.search-select-trigger:hover { border-color: var(--brand-mid); }
+.search-select.active .search-select-trigger { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(111,147,235,0.15); }
+.search-select.has-value .search-select-trigger { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+.search-select-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 20px rgba(33,52,120,0.12);
+  z-index: 100;
+  overflow: hidden;
+}
+.search-select.active .search-select-panel { display: block; }
+.search-select-input-wrap { padding: 8px; border-bottom: 1px solid var(--border); }
+.search-select-input-wrap input {
+  width: 100%;
+  font-family: var(--brand-sans);
+  font-weight: 300;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  color: var(--text-primary);
+  background: var(--bg);
+}
+.search-select-input-wrap input:focus { border-color: var(--brand); }
+.search-select-list { max-height: 240px; overflow-y: auto; }
+.search-select-item {
+  padding: 9px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.search-select-item:last-child { border-bottom: none; }
+.search-select-item:hover { background: var(--brand-light); color: var(--brand); }
+.search-select-item.selected { background: var(--brand-light); color: var(--brand); font-weight: 500; }
+.search-select-empty { padding: 12px 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
+
+/* tabs */
+.tab-nav { display: flex; gap: 2px; }
+.tab-btn { font-family: var(--brand-sans); font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); background: transparent; border: none; padding: 8px 14px; border-radius: 0; cursor: pointer; transition: all 0.15s; border-bottom: 1.5px solid transparent; }
+.tab-btn:hover { color: #ffffff; }
+.tab-btn.active { color: #ffffff; font-weight: 500; border-bottom-color: #ffffff; }
+
+/* needs tab */
+.needs-group { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-card); overflow: hidden; }
+.needs-group-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.needs-list { padding: 4px 0; }
+.need-item { display: flex; gap: 12px; align-items: flex-start; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.need-item:last-child { border-bottom: none; }
+.need-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; width: 16px; text-align: center; }
+.need-done .need-icon { color: var(--l-text); }
+.need-pending .need-icon { color: var(--text-muted); }
+.need-done { background: #fafffe; }
 
 /* animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -328,8 +450,8 @@ tbody tr:hover td { background: #fafbff; }
 
 <!-- ══ UPLOAD SCREEN ══ -->
 <div id="screen-upload">
-  <div class="upload-logo">Humand × Autocity</div>
-  <h1 class="upload-title"><strong>Dashboard</strong> de desempeño</h1>
+  <div class="upload-logo"><img src="assets/logo-black.svg" alt="Autocity"></div>
+  <h1 class="upload-title">Dashboard <strong>de desempeño</strong></h1>
   <p class="upload-subtitle">Cargá el export de Humand para generar el reporte</p>
 
   <div class="drop-zone" id="dropZone">
@@ -354,9 +476,12 @@ tbody tr:hover td { background: #fafbff; }
 <div id="screen-dashboard">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-brand">Autocity</span>
+      <span class="topbar-brand"><img src="assets/logo-white.svg" alt="Autocity"></span>
       <div class="topbar-sep"></div>
-      <span class="topbar-title">Reporte de desempeño</span>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('needs')">Necesidades del cliente</button>
+      </div>
     </div>
     <div class="topbar-right">
       <span class="cycle-badge" id="cycleBadge">Ciclo 2026</span>
@@ -364,13 +489,47 @@ tbody tr:hover td { background: #fafbff; }
     </div>
   </div>
 
-  <div class="main">
+  <!-- ══ TAB: DASHBOARD ══ -->
+  <div id="tab-dashboard" class="main">
     <!-- Filters -->
     <div class="filters-bar">
       <span class="filter-label">Filtrar por</span>
-      <select id="fLider" onchange="applyFilters()"><option value="">Todos los líderes</option></select>
-      <select id="fArea"  onchange="applyFilters()"><option value="">Todas las áreas</option></select>
-      <select id="fDepto" onchange="applyFilters()"><option value="">Todos los departamentos</option></select>
+      <div class="search-select" id="liderDropdown">
+        <div class="search-select-trigger" onclick="toggleLiderDropdown()">
+          <span id="liderLabel">Todos los líderes</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#636271" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-select-panel" id="liderPanel">
+          <div class="search-select-input-wrap">
+            <input type="text" id="liderSearch" placeholder="Buscar líder..." oninput="filterLideres()" onclick="event.stopPropagation()">
+          </div>
+          <div class="search-select-list" id="liderList"></div>
+        </div>
+      </div>
+      <div class="search-select" id="areaDropdown">
+        <div class="search-select-trigger" onclick="toggleDropdown('area')">
+          <span id="areaLabel">Todas las áreas</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#636271" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-select-panel" id="areaPanel">
+          <div class="search-select-input-wrap">
+            <input type="text" id="areaSearch" placeholder="Buscar área..." oninput="filterDropdown('area')" onclick="event.stopPropagation()">
+          </div>
+          <div class="search-select-list" id="areaList"></div>
+        </div>
+      </div>
+      <div class="search-select" id="deptoDropdown">
+        <div class="search-select-trigger" onclick="toggleDropdown('depto')">
+          <span id="deptoLabel">Todos los departamentos</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#636271" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-select-panel" id="deptoPanel">
+          <div class="search-select-input-wrap">
+            <input type="text" id="deptoSearch" placeholder="Buscar departamento..." oninput="filterDropdown('depto')" onclick="event.stopPropagation()">
+          </div>
+          <div class="search-select-list" id="deptoList"></div>
+        </div>
+      </div>
     </div>
 
     <!-- KPI Cards -->
@@ -390,6 +549,15 @@ tbody tr:hover td { background: #fafbff; }
         <div class="legend" id="legComp"></div>
         <div style="position:relative;height:190px;"><canvas id="chartComp" role="img" aria-label="Distribución de calificación de comportamientos por escala"></canvas></div>
       </div>
+    </div>
+
+    <!-- Desglose por dimensión de comportamientos -->
+    <div class="section-header">Calificación por dimensión de comportamientos</div>
+    <div class="table-card" style="margin-bottom:1.75rem;">
+      <table>
+        <thead><tr><th>Dimensión</th><th>Preguntas</th><th>Promedio</th><th>No logrado</th><th>Logrado en parte</th><th>Logrado</th><th>Superado</th></tr></thead>
+        <tbody id="tbDimensiones"></tbody>
+      </table>
     </div>
 
     <!-- Avance por área -->
@@ -413,17 +581,144 @@ tbody tr:hover td { background: #fafbff; }
     <!-- Detalle por colaborador -->
     <div class="section-header">Detalle por colaborador</div>
     <div class="table-card">
-      <table>
-        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>Cal. objetivos</th><th>Cal. comportamientos</th></tr></thead>
+      <table style="table-layout:fixed;width:100%;">
+        <colgroup>
+          <col style="width:20%">
+          <col style="width:17%">
+          <col style="width:18%">
+          <col style="width:10%">
+          <col style="width:8%">
+          <col style="width:15%">
+          <col style="width:12%">
+        </colgroup>
+        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>% Obj</th><th>Cal. objetivos</th><th>Cal. comportamientos</th></tr></thead>
         <tbody id="tbColaboradores"></tbody>
       </table>
     </div>
   </div>
+
+  <!-- ══ TAB: NECESIDADES ══ -->
+  <div id="tab-needs" class="main" style="display:none;">
+    <div style="max-width:760px;">
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Necesidades relevadas del cliente</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Extraídas de reuniones con Florencia Mansilla Montero y equipo Autocity — Ciclo 2026</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <div class="needs-group">
+          <div class="needs-group-title">Dashboard de desempeño</div>
+          <div class="needs-list">
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance general</strong> — Evaluados / total activos del ciclo.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Área</strong> — Agrupado por Agrupador Area, con filtro.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Departamento</strong> — Agrupado por Departamento, con filtro.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de objetivos</strong> — Escala 4 niveles usando progreso de pestaña Objetivos, promediado por persona.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Escala 4 niveles usando columnas 1–9 de Evaluación descendente.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Desglose por dimensión</strong> — Pasión comercial (1–3), Eficiencia (4–6), Servicio (7–9) con promedio y distribución.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Líder</strong> — Solo personas con Agrupador Puesto = LIDER.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Área y Departamento</strong> — Afectan todos los KPIs simultáneamente.</div></div>
+            <div class="need-item need-pending"><span class="need-icon">○</span><div><strong>Resultados por jerarquía</strong> — Ver resultados agregados por gerencia/dirección, incluyendo reportes indirectos (no solo directos del líder).</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;padding:12px 16px;background:var(--brand-light);border-radius:var(--radius-sm);border-left:3px solid var(--brand-mid);">
+        <div style="font-size:12px;color:var(--brand);font-weight:500;margin-bottom:4px;">Leyenda</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary);">
+          <span><span style="color:var(--l-text);font-weight:600;">✓ Implementado</span> — disponible en este dashboard</span>
+          <span><span style="color:var(--text-muted);font-weight:600;">○ Pendiente</span> — fuera del alcance actual o requiere desarrollo adicional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+let ALL_LIDERES = [];
+let ALL_AREAS = [];
+let ALL_DEPTOS = [];
+let selectedLider = '';
+let selectedArea = '';
+let selectedDepto = '';
+
+const DROPDOWN_CONFIG = {
+  lider: { allItems: () => ALL_LIDERES, selectedVar: () => selectedLider, defaultLabel: 'Todos los líderes', placeholder: 'Buscar líder...' },
+  area:  { allItems: () => ALL_AREAS,  selectedVar: () => selectedArea,  defaultLabel: 'Todas las áreas',    placeholder: 'Buscar área...' },
+  depto: { allItems: () => ALL_DEPTOS, selectedVar: () => selectedDepto, defaultLabel: 'Todos los departamentos', placeholder: 'Buscar departamento...' },
+};
+
+function toggleDropdown(key) {
+  const dd = document.getElementById(key === 'lider' ? 'liderDropdown' : key + 'Dropdown');
+  const isActive = dd.classList.toggle('active');
+  if (isActive) {
+    const searchId = key === 'lider' ? 'liderSearch' : key + 'Search';
+    document.getElementById(searchId).value = '';
+    filterDropdown(key);
+    document.getElementById(searchId).focus();
+  }
+}
+
+// keep old name working
+function toggleLiderDropdown() { toggleDropdown('lider'); }
+
+function filterDropdown(key) {
+  const cfg = DROPDOWN_CONFIG[key];
+  const searchId = key === 'lider' ? 'liderSearch' : key + 'Search';
+  const listId   = key === 'lider' ? 'liderList'   : key + 'List';
+  const q = document.getElementById(searchId).value.toLowerCase();
+  const list = document.getElementById(listId);
+  const items = [{ value: '', label: cfg.defaultLabel }, ...cfg.allItems().map(l => ({ value: l, label: l }))];
+  const results = items.filter(i => i.label.toLowerCase().includes(q));
+  const sel = cfg.selectedVar();
+  if (!results.length) {
+    list.innerHTML = '<div class="search-select-empty">Sin resultados</div>';
+    return;
+  }
+  list.innerHTML = results.map(i =>
+    `<div class="search-select-item${sel === i.value ? ' selected' : ''}" onclick="selectDropdown('${key}','${i.value.replace(/'/g,"\\'")}','${i.label.replace(/'/g,"\\'")}')">
+      ${i.value === '' ? `<strong>${i.label}</strong>` : i.label}
+    </div>`
+  ).join('');
+}
+
+// keep old name working
+function filterLideres() { filterDropdown('lider'); }
+
+function selectDropdown(key, value, label) {
+  const ddId = key === 'lider' ? 'liderDropdown' : key + 'Dropdown';
+  const labelId = key === 'lider' ? 'liderLabel' : key + 'Label';
+  const cfg = DROPDOWN_CONFIG[key];
+  if (key === 'lider') selectedLider = value;
+  else if (key === 'area') selectedArea = value;
+  else if (key === 'depto') selectedDepto = value;
+  document.getElementById(labelId).textContent = value ? label : cfg.defaultLabel;
+  const dd = document.getElementById(ddId);
+  dd.classList.remove('active');
+  dd.classList.toggle('has-value', value !== '');
+  applyFilters();
+}
+
+function selectLider(value, label) { selectDropdown('lider', value, label); }
+
+document.addEventListener('click', e => {
+  ['liderDropdown','areaDropdown','deptoDropdown'].forEach(id => {
+    const dd = document.getElementById(id);
+    if (dd && !dd.contains(e.target)) dd.classList.remove('active');
+  });
+});
+
+function switchTab(tab) {
+  document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
+  document.getElementById('tab-needs').style.display = tab === 'needs' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+}
+
 let DB = { usuarios: [], evaluados: [], objetivos: [] };
 let charts = {};
 
@@ -519,7 +814,8 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
 
   const eRow = evalDescRaw[0] || {};
   const colEvNombre   = findCol(eRow, ['nombre y apellido', 'nombre']);
-  const colEvUsername = findCol(eRow, ['evaluado']);
+  // 'Evaluado' col contiene el CUIL — buscar match exacto para no confundir con "[Evaluado]\nNombre..."
+  const colEvUsername = Object.keys(eRow).find(k => k.trim().toLowerCase() === 'evaluado') || findCol(eRow, ['evaluado']);
   const colEvEstado   = findCol(eRow, ['estado de evaluación', 'estado']);
   const comportCols   = Object.keys(eRow).filter(k => {
     const nk = normalizeKey(k);
@@ -540,7 +836,6 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
   }).filter(e => e.nombre);
 
   const oRow = objetivosRaw[0] || {};
-  // Objetivos: columnas con prefijo [Responsable] en los exports de Human
   const colOUsername = findCol(oRow, ['[responsable]\nusuario', 'usuario']);
   const colONombre   = findCol(oRow, ['[responsable]\nnombre', 'nombre y apellido', 'nombre']);
   const colProgreso  = findCol(oRow, ['progreso']);
@@ -561,10 +856,10 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
 /* ══ SCORING ══ */
 const SCALE = ['No logrado','Logrado en parte','Logrado','Superado'];
 const SCALE_COLORS = {
-  'No logrado':      { bg: '#fcebeb', text: '#a32d2d', chart: '#e24b4a' },
-  'Logrado en parte':{ bg: '#faeeda', text: '#854f0b', chart: '#ef9f27' },
-  'Logrado':         { bg: '#eaf3de', text: '#3b6d11', chart: '#639922' },
-  'Superado':        { bg: '#e6f1fb', text: '#185fa5', chart: '#378add' },
+  'No logrado':      { bg: '#f3e4df', text: '#8a3f30', chart: '#b86a5a' },
+  'Logrado en parte':{ bg: '#f4ecdc', text: '#85671e', chart: '#c9a66b' },
+  'Logrado':         { bg: '#e6ead9', text: '#4f5e34', chart: '#7a8a5a' },
+  'Superado':        { bg: '#dae1dc', text: '#365447', chart: '#365447' },
 };
 
 function comportToLabel(avg) {
@@ -584,7 +879,6 @@ function badgeClass(label) {
 }
 
 function getEvalData(u) {
-  // Prefer username match, fallback to name
   const ev = u.username
     ? (DB.evaluados.find(e => e.username === u.username) || DB.evaluados.find(e => e.nombre === u.nombre))
     : DB.evaluados.find(e => e.nombre === u.nombre);
@@ -600,11 +894,9 @@ function getEvalData(u) {
   }
   if (objs.length) {
     const totalPeso = objs.reduce((a,o) => a + o.peso, 0);
-    if (totalPeso > 0) {
-      objPct = objs.reduce((a,o) => a + o.progreso * o.peso, 0) / totalPeso;
-    } else {
-      objPct = objs.reduce((a,o) => a + o.progreso, 0) / objs.length;
-    }
+    objPct = totalPeso > 0
+      ? objs.reduce((a,o) => a + o.progreso * o.peso, 0) / totalPeso
+      : objs.reduce((a,o) => a + o.progreso, 0) / objs.length;
     objLabel = progresoToLabel(objPct);
   }
   return { compLabel, objLabel, objPct };
@@ -614,24 +906,18 @@ function getEvalData(u) {
 let filtered = [];
 
 function applyFilters() {
-  const l = document.getElementById('fLider').value;
-  const a = document.getElementById('fArea').value;
-  const d = document.getElementById('fDepto').value;
   filtered = DB.usuarios.filter(u =>
-    (!l || u.jefe === l) &&
-    (!a || u.area === a) &&
-    (!d || u.depto === d)
+    (!selectedLider || u.jefe === selectedLider) &&
+    (!selectedArea  || u.area === selectedArea)  &&
+    (!selectedDepto || u.depto === selectedDepto)
   );
-  ['fLider','fArea','fDepto'].forEach(id => {
-    const el = document.getElementById(id);
-    el.classList.toggle('filter-active', el.value !== '');
-  });
   renderAll();
 }
 
 function renderAll() {
   renderKPIs();
   renderCharts();
+  renderTablaDimensiones();
   renderTablaArea();
   renderTablaDepto();
   renderTablaColaboradores();
@@ -680,7 +966,10 @@ function calcDist(users, type) {
 }
 
 function renderCharts() {
-  const evUsers = filtered.filter(u => u.estado === 'Finalizado' || u.estado === 'Finalizada');
+  const evUsers = filtered.filter(u => {
+    const ev = DB.evaluados.find(e => u.username ? e.username === u.username : e.nombre === u.nombre);
+    return ev && (ev.estado === 'Finalizada' || ev.estado === 'Finalizado');
+  });
   const objDist  = calcDist(evUsers, 'obj');
   const compDist = calcDist(evUsers, 'comp');
   const vals   = s => SCALE.map(l => s[l]);
@@ -710,6 +999,72 @@ function renderCharts() {
   };
   cfg('chartObj',  vals(objDist));
   cfg('chartComp', vals(compDist));
+}
+
+const DIMENSIONES = [
+  { nombre: 'Pasión comercial', indices: [0,1,2], color: '#000000' },
+  { nombre: 'Eficiencia',       indices: [3,4,5], color: '#555555' },
+  { nombre: 'Servicio',         indices: [6,7,8], color: '#a8a39a' },
+];
+
+function renderTablaDimensiones() {
+  // Usar estado de evaluación descendente, no estado de usuario
+  const evUsers = filtered.filter(u => {
+    const ev = DB.evaluados.find(e => u.username ? e.username === u.username : e.nombre === u.nombre);
+    return ev && (ev.estado === 'Finalizada' || ev.estado === 'Finalizado');
+  });
+
+  if (!evUsers.length) {
+    document.getElementById('tbDimensiones').innerHTML =
+      `<tr><td colspan="7" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+    return;
+  }
+
+  document.getElementById('tbDimensiones').innerHTML = DIMENSIONES.map(dim => {
+    const dist = { 'No logrado':0,'Logrado en parte':0,'Logrado':0,'Superado':0 };
+    let sumAvg = 0, count = 0;
+
+    evUsers.forEach(u => {
+      const ev = DB.evaluados.find(e => u.username ? e.username === u.username : e.nombre === u.nombre);
+      if (!ev || !ev.comportamientos.length) return;
+      const vals = dim.indices.map(i => ev.comportamientos[i]).filter(v => v != null);
+      if (!vals.length) return;
+      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      sumAvg += avg; count++;
+      dist[comportToLabel(avg)]++;
+    });
+
+    const total = Object.values(dist).reduce((a,b)=>a+b,0);
+    const globalAvg = count > 0 ? (sumAvg/count).toFixed(2) : '—';
+    const globalLabel = count > 0 ? comportToLabel(sumAvg/count) : null;
+
+    const pct = v => total > 0 ? Math.round(v/total*100) : 0;
+    const segColors = ['#b86a5a','#c9a66b','#7a8a5a','#365447'];
+    const segWidths = SCALE.map(l => pct(dist[l]));
+
+    const avgBadge = globalLabel
+      ? `<span class="badge ${badgeClass(globalLabel)}" style="font-family:var(--brand-sans);font-weight:500;">${globalAvg}</span>`
+      : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:10px;height:10px;border-radius:2px;background:${dim.color};display:inline-block;flex-shrink:0;"></span>
+          <strong>${dim.nombre}</strong>
+        </div>
+      </td>
+      <td style="color:var(--text-muted);font-size:12px;">
+        <div class="dim-bar-wrap">
+          ${segColors.map((c,i) => `<div class="dim-bar-seg" style="background:${c};width:${segWidths[i]}%;"></div>`).join('')}
+        </div>
+      </td>
+      <td>${avgBadge}</td>
+      <td><span class="dim-count" style="color:var(--nl-text);">${dist['No logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['No logrado'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--lp-text);">${dist['Logrado en parte']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado en parte'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--l-text);">${dist['Logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado'])}%)</span></span></td>
+      <td><span class="dim-count" style="color:var(--s-text);">${dist['Superado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Superado'])}%)</span></span></td>
+    </tr>`;
+  }).join('');
 }
 
 function avgObjPct(users) {
@@ -767,36 +1122,36 @@ function renderTablaColaboradores() {
       : u.estado === 'En curso'
       ? '<span class="badge badge-lp">En curso</span>'
       : '<span class="badge badge-nl">Sin iniciar</span>';
-    const objCell = objLabel
-      ? `<span class="badge ${badgeClass(objLabel)}">${objLabel}</span> <span style="font-family:var(--dm-mono,'DM Mono',monospace);font-size:11px;color:var(--text-muted);margin-left:4px;">${Math.round(objPct)}%</span>`
+    const pctCell = objPct !== null && objPct !== undefined
+      ? `<span style="font-family:var(--brand-mono,'DM Mono',monospace);font-size:13px;font-weight:600;color:var(--text-primary);">${Math.round(objPct)}%</span>`
+      : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+    const badgeCell = objLabel
+      ? `<span class="badge ${badgeClass(objLabel)}">${objLabel}</span>`
       : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
     return `<tr>
       <td><strong>${u.nombre}</strong></td>
       <td><span class="area-tag">${u.area}</span></td>
       <td style="color:var(--text-secondary);font-size:12px;">${u.jefe || '—'}</td>
       <td>${estadoBadge}</td>
-      <td>${objCell}</td>
+      <td>${pctCell}</td>
+      <td>${badgeCell}</td>
       <td>${compLabel ? `<span class="badge ${badgeClass(compLabel)}">${compLabel}</span>` : '<span style="color:var(--text-muted);font-size:12px;">—</span>'}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="6" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+  }).join('') : `<tr><td colspan="7" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
 }
 
 /* ══ SHOW DASHBOARD ══ */
 function showDashboard() {
   filtered = [...DB.usuarios];
+  selectedLider = '';
 
-  const lideresSet = [...new Set(DB.usuarios.map(u => u.jefe).filter(Boolean))].sort();
-  const areasSet   = [...new Set(DB.usuarios.map(u => u.area).filter(Boolean))].sort();
-  const deptosSet  = [...new Set(DB.usuarios.map(u => u.depto).filter(Boolean))].sort();
+  ALL_LIDERES = [...new Set(DB.usuarios.map(u => u.jefe).filter(Boolean))].sort();
+  ALL_AREAS   = [...new Set(DB.usuarios.map(u => u.area).filter(Boolean))].sort();
+  ALL_DEPTOS  = [...new Set(DB.usuarios.map(u => u.depto).filter(Boolean))].sort();
 
-  const populate = (id, opts) => {
-    const el = document.getElementById(id);
-    el.innerHTML = '<option value="">' + el.options[0].text + '</option>';
-    opts.forEach(o => { const opt = document.createElement('option'); opt.value = o; opt.textContent = o; el.appendChild(opt); });
-  };
-  populate('fLider', lideresSet);
-  populate('fArea',  areasSet);
-  populate('fDepto', deptosSet);
+  filterDropdown('lider');
+  filterDropdown('area');
+  filterDropdown('depto');
 
   document.getElementById('screen-upload').style.display = 'none';
   document.getElementById('screen-dashboard').style.display = 'block';
@@ -809,6 +1164,18 @@ function resetDashboard() {
   DB = { usuarios: [], evaluados: [], objetivos: [] };
   Object.values(charts).forEach(c => c.destroy());
   charts = {};
+  selectedLider = '';
+  selectedArea  = '';
+  selectedDepto = '';
+  ALL_LIDERES = [];
+  ALL_AREAS   = [];
+  ALL_DEPTOS  = [];
+  document.getElementById('liderLabel').textContent = 'Todos los líderes';
+  document.getElementById('areaLabel').textContent  = 'Todas las áreas';
+  document.getElementById('deptoLabel').textContent = 'Todos los departamentos';
+  document.getElementById('liderDropdown').classList.remove('active','has-value');
+  document.getElementById('areaDropdown').classList.remove('active','has-value');
+  document.getElementById('deptoDropdown').classList.remove('active','has-value');
   document.getElementById('fileInput').value = '';
   document.getElementById('loadingFill').style.width = '0%';
   document.getElementById('loadingBar').style.display = 'none';
