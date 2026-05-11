@@ -444,6 +444,40 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 /* animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .fade-in { animation: fadeIn 0.35s ease forwards; }
+
+/* ── SIN INICIAR MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease forwards;
+}
+.modal {
+  background: var(--surface); border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  width: 100%; max-width: 580px; max-height: 80vh;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.modal-header {
+  padding: 1.25rem 1.5rem; border-bottom: 1.5px solid var(--brand);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.modal-title { font-family: var(--brand-sans); font-size: 13px; font-weight: 500; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.1em; }
+.modal-count { font-family: var(--brand-sans); font-size: 12px; font-weight: 300; color: var(--text-muted); margin-top: 3px; }
+.modal-close {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong); background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 14px; line-height: 1; transition: all 0.15s;
+  font-family: var(--brand-sans);
+}
+.modal-close:hover { background: var(--nl-bg); color: var(--nl-text); border-color: var(--nl-text); }
+.modal-body { overflow-y: auto; flex: 1; }
+.modal-body thead th { position: sticky; top: 0; z-index: 1; background: var(--bg); }
+.kpi-card.clickable { cursor: pointer; }
+.kpi-card.clickable:hover { box-shadow: var(--shadow-hover); border-color: rgba(0,0,0,0.35); }
 </style>
 </head>
 <body>
@@ -537,11 +571,10 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 
     <!-- Charts -->
     <div class="charts-row">
-      <div class="card">
-        <div class="card-title">Calificación de objetivos</div>
-        <div class="card-sub">Distribución por escala de evaluación</div>
-        <div class="legend" id="legObj"></div>
-        <div style="position:relative;height:190px;"><canvas id="chartObj" role="img" aria-label="Distribución de calificación de objetivos por escala"></canvas></div>
+      <div class="card" id="cardObj">
+        <div class="card-title">Cumplimiento de objetivos</div>
+        <div class="card-sub">Promedio ponderado del ciclo</div>
+        <div id="objNumerico"></div>
       </div>
       <div class="card">
         <div class="card-title">Calificación de comportamientos</div>
@@ -583,15 +616,14 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
     <div class="table-card">
       <table style="table-layout:fixed;width:100%;">
         <colgroup>
+          <col style="width:22%">
           <col style="width:20%">
-          <col style="width:17%">
-          <col style="width:18%">
-          <col style="width:10%">
-          <col style="width:8%">
-          <col style="width:15%">
+          <col style="width:20%">
           <col style="width:12%">
+          <col style="width:10%">
+          <col style="width:16%">
         </colgroup>
-        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>% Obj</th><th>Cal. objetivos</th><th>Cal. comportamientos</th></tr></thead>
+        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>% Obj</th><th>Cal. comportamientos</th></tr></thead>
         <tbody id="tbColaboradores"></tbody>
       </table>
     </div>
@@ -613,7 +645,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance general</strong> — Evaluados / total activos del ciclo.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Área</strong> — Agrupado por Agrupador Area, con filtro.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Departamento</strong> — Agrupado por Departamento, con filtro.</div></div>
-            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de objetivos</strong> — Escala 4 niveles usando progreso de pestaña Objetivos, promediado por persona.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de objetivos</strong> — Promedio ponderado % real por ciclo + distribución por rangos (0–25%, 26–50%, 51–75%, 76–100%, >100%).</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Escala 4 niveles usando columnas 1–9 de Evaluación descendente.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Desglose por dimensión</strong> — Pasión comercial (1–3), Eficiencia (4–6), Servicio (7–9) con promedio y distribución.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Líder</strong> — Solo personas con Agrupador Puesto = LIDER.</div></div>
@@ -634,6 +666,25 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
     </div>
   </div>
 
+</div>
+
+<!-- ══ SIN INICIAR MODAL ══ -->
+<div id="modalSinIniciar" style="display:none;" class="modal-overlay" onclick="closeSinIniciarModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Sin iniciar — detalle</div>
+        <div class="modal-count" id="modalSinIniciarCount"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modalSinIniciar').style.display='none';document.body.style.overflow='';">✕</button>
+    </div>
+    <div class="modal-body">
+      <table>
+        <thead><tr><th>Colaborador</th><th>Área</th><th>Departamento</th><th>Líder</th></tr></thead>
+        <tbody id="tbSinIniciar"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -781,6 +832,15 @@ function handleFile(file) {
 /* ══ PARSE DATA ══ */
 function normalizeKey(k) { return (k || '').toString().toLowerCase().replace(/\n/g, ' ').trim(); }
 
+// Si el valor es un email puro o "Nombre <email>", limpiarlo
+function cleanNombre(val) {
+  if (!val) return '';
+  const angleMatch = val.match(/^(.+?)\s*<[^>]+>$/);
+  if (angleMatch) return angleMatch[1].trim();
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return '';
+  return val;
+}
+
 function findCol(row, keywords) {
   const keys = Object.keys(row);
   for (const k of keywords) {
@@ -804,7 +864,7 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
   DB.usuarios = usuariosRaw.map(r => ({
     nombre:   (r[colNombre]   || '').toString().trim(),
     username: (r[colUsername] || '').toString().trim(),
-    jefe:     (r[colJefe]     || '').toString().replace(/\s*\(admin\)/i,'').trim(),
+    jefe:     cleanNombre((r[colJefe] || '').toString().replace(/\s*\(admin\)/i,'').trim()),
     area:     (r[colArea]     || '').toString().toUpperCase().trim(),
     puesto:   (r[colPuesto]   || '').toString().toUpperCase().replace(/\n/g,' ').trim(),
     depto:    (r[colDepto]    || '').toString().trim(),
@@ -947,10 +1007,10 @@ function renderKPIs() {
       <div class="kpi-value">${curso}</div>
       <div class="kpi-sub">Evaluaciones activas</div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card clickable" onclick="openSinIniciarModal()" title="Ver quiénes no iniciaron">
       <div class="kpi-label">Sin iniciar</div>
       <div class="kpi-value">${sinI}</div>
-      <div class="kpi-sub">Pendientes de inicio</div>
+      <div class="kpi-sub">${sinI > 0 ? 'Ver listado →' : 'Ninguno pendiente'}</div>
     </div>
   `;
 }
@@ -965,40 +1025,73 @@ function calcDist(users, type) {
   return dist;
 }
 
+function renderObjNumerico(evUsers) {
+  const pcts = evUsers.map(u => getEvalData(u).objPct).filter(v => v !== null && v !== undefined);
+  const container = document.getElementById('objNumerico');
+  if (!pcts.length) {
+    container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:1rem 0;">Sin datos de objetivos</div>';
+    return;
+  }
+  const avg = Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length);
+  const rangos = [
+    { label: '0 – 25%',   min: 0,   max: 25,  color: '#b86a5a' },
+    { label: '26 – 50%',  min: 26,  max: 50,  color: '#c9a66b' },
+    { label: '51 – 75%',  min: 51,  max: 75,  color: '#7a8a5a' },
+    { label: '76 – 100%', min: 76,  max: 100, color: '#4f6b46' },
+    { label: '> 100%',    min: 101, max: Infinity, color: '#365447' },
+  ];
+  const counts = rangos.map(r => pcts.filter(p => p >= r.min && p <= r.max).length);
+  const maxCount = Math.max(...counts, 1);
+
+  container.innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0 10px;">
+      <span style="font-family:var(--brand-sans);font-size:48px;font-weight:500;color:var(--text-primary);letter-spacing:-2px;line-height:1;">${avg}</span>
+      <span style="font-size:22px;color:var(--text-muted);font-weight:400;">%</span>
+      <span style="font-size:12px;color:var(--text-muted);margin-left:4px;">${pcts.length} evaluados</span>
+    </div>
+    <div style="height:2px;background:rgba(0,0,0,0.08);border-radius:999px;margin-bottom:16px;overflow:hidden;">
+      <div style="height:100%;width:${Math.min(avg,100)}%;background:#7a8a5a;border-radius:999px;transition:width 0.5s ease;"></div>
+    </div>
+    <div style="font-family:var(--brand-sans);font-size:10px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;">Distribución por rango</div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      ${rangos.map((r,i) => `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-family:var(--brand-sans);font-size:11px;color:var(--text-muted);width:68px;text-align:right;flex-shrink:0;">${r.label}</span>
+          <div style="flex:1;height:18px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${Math.round(counts[i]/maxCount*100)}%;background:${r.color};border-radius:2px;transition:width 0.5s ease;"></div>
+          </div>
+          <span style="font-family:var(--brand-sans);font-size:11px;font-weight:500;color:var(--text-secondary);width:48px;flex-shrink:0;">${counts[i]} pers.</span>
+        </div>`).join('')}
+    </div>`;
+}
+
 function renderCharts() {
   const evUsers = filtered.filter(u => {
     const ev = DB.evaluados.find(e => u.username ? e.username === u.username : e.nombre === u.nombre);
     return ev && (ev.estado === 'Finalizada' || ev.estado === 'Finalizado');
   });
-  const objDist  = calcDist(evUsers, 'obj');
+
+  renderObjNumerico(evUsers);
+
   const compDist = calcDist(evUsers, 'comp');
-  const vals   = s => SCALE.map(l => s[l]);
   const colors = SCALE.map(l => SCALE_COLORS[l].chart);
 
-  const buildLegend = (id, dist) => {
-    document.getElementById(id).innerHTML = SCALE.map((l,i) =>
-      `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} <strong>(${dist[l]})</strong></div>`
-    ).join('');
-  };
-  buildLegend('legObj', objDist);
-  buildLegend('legComp', compDist);
+  document.getElementById('legComp').innerHTML = SCALE.map((l,i) =>
+    `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} <strong>(${compDist[l]})</strong></div>`
+  ).join('');
 
-  const cfg = (id, data) => {
-    if (charts[id]) charts[id].destroy();
-    charts[id] = new Chart(document.getElementById(id), {
-      type: 'doughnut',
-      data: { labels: SCALE, datasets: [{ data, backgroundColor: colors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }] },
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '65%',
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} personas` } }
-        }
+  if (charts['chartComp']) charts['chartComp'].destroy();
+  charts['chartComp'] = new Chart(document.getElementById('chartComp'), {
+    type: 'doughnut',
+    data: { labels: SCALE, datasets: [{ data: SCALE.map(l => compDist[l]), backgroundColor: colors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} personas` } }
       }
-    });
-  };
-  cfg('chartObj',  vals(objDist));
-  cfg('chartComp', vals(compDist));
+    }
+  });
 }
 
 const DIMENSIONES = [
@@ -1134,11 +1227,44 @@ function renderTablaColaboradores() {
       <td style="color:var(--text-secondary);font-size:12px;">${u.jefe || '—'}</td>
       <td>${estadoBadge}</td>
       <td>${pctCell}</td>
-      <td>${badgeCell}</td>
       <td>${compLabel ? `<span class="badge ${badgeClass(compLabel)}">${compLabel}</span>` : '<span style="color:var(--text-muted);font-size:12px;">—</span>'}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="7" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+  }).join('') : `<tr><td colspan="6" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
 }
+
+/* ══ SIN INICIAR MODAL ══ */
+function openSinIniciarModal() {
+  const sinIniciar = filtered.filter(u =>
+    u.estado !== 'Finalizado' && u.estado !== 'Finalizada' && u.estado !== 'En curso'
+  );
+  const n = sinIniciar.length;
+  document.getElementById('modalSinIniciarCount').textContent =
+    `${n} colaborador${n !== 1 ? 'es' : ''} pendiente${n !== 1 ? 's' : ''}`;
+  document.getElementById('tbSinIniciar').innerHTML = n
+    ? sinIniciar.map(u => `<tr>
+        <td><strong>${u.nombre}</strong></td>
+        <td><span class="area-tag">${u.area}</span></td>
+        <td style="color:var(--text-secondary);font-size:12px;">${u.depto || '—'}</td>
+        <td style="color:var(--text-secondary);font-size:12px;">${u.jefe || '—'}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="4" class="empty-state">No hay colaboradores sin iniciar</td></tr>`;
+  document.getElementById('modalSinIniciar').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSinIniciarModal(e) {
+  if (e.target === document.getElementById('modalSinIniciar')) {
+    document.getElementById('modalSinIniciar').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('modalSinIniciar').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+});
 
 /* ══ SHOW DASHBOARD ══ */
 function showDashboard() {
