@@ -502,6 +502,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
 
   <p class="upload-note">
     <strong>Pestañas requeridas:</strong> Usuarios evaluados, Evaluación descendente, Objetivos.<br>
+    <strong>Opcional:</strong> Autoevaluación (si está presente, suma la columna "Autoevaluación" en el detalle por colaborador).<br>
     Los datos se procesan en tu navegador y nunca se envían a ningún servidor.
   </p>
 </div>
@@ -588,7 +589,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
     <div class="section-header">Calificación por dimensión de comportamientos</div>
     <div class="table-card" style="margin-bottom:1.75rem;">
       <table>
-        <thead><tr><th>Dimensión</th><th>Preguntas</th><th>Promedio</th><th>No logrado</th><th>Logrado en parte</th><th>Logrado</th><th>Superado</th></tr></thead>
+        <thead><tr><th>Dimensión</th><th>Preguntas</th><th>Promedio</th><th>No logrado</th><th>Logrado en parte</th><th>Logrado</th></tr></thead>
         <tbody id="tbDimensiones"></tbody>
       </table>
     </div>
@@ -616,14 +617,16 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
     <div class="table-card">
       <table style="table-layout:fixed;width:100%;">
         <colgroup>
-          <col style="width:22%">
-          <col style="width:20%">
-          <col style="width:20%">
-          <col style="width:12%">
+          <col style="width:17%">
+          <col style="width:14%">
+          <col style="width:14%">
           <col style="width:10%">
-          <col style="width:16%">
+          <col style="width:8%">
+          <col style="width:13%">
+          <col style="width:12%">
+          <col style="width:12%">
         </colgroup>
-        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>% Obj</th><th>Cal. comportamientos</th></tr></thead>
+        <thead><tr><th>Colaborador</th><th>Área</th><th>Líder</th><th>Estado</th><th>% Obj</th><th>Cal. comportamientos</th><th>Calificación final</th><th>Autoevaluación</th></tr></thead>
         <tbody id="tbColaboradores"></tbody>
       </table>
     </div>
@@ -646,7 +649,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Área</strong> — Agrupado por Agrupador Area, con filtro.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>KPI avance por Departamento</strong> — Agrupado por Departamento, con filtro.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de objetivos</strong> — Promedio ponderado % real por ciclo + distribución por rangos (0–25%, 26–50%, 51–75%, 76–100%, >100%).</div></div>
-            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Escala 4 niveles usando columnas 1–9 de Evaluación descendente.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Escala de 3 niveles usando "Puntaje de Preguntas" de Usuarios evaluados.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Desglose por dimensión</strong> — Pasión comercial (1–3), Eficiencia (4–6), Servicio (7–9) con promedio y distribución.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Líder</strong> — Solo personas con Agrupador Puesto = LIDER.</div></div>
             <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Filtro global por Área y Departamento</strong> — Afectan todos los KPIs simultáneamente.</div></div>
@@ -680,7 +683,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
             </div>
             <div class="need-item">
               <span class="need-icon">🤝</span>
-              <div><strong>Calificación de comportamientos</strong> — El jefe responde 9 preguntas sobre el desempeño de cada persona, calificando del 1 al 4. Se promedian esas respuestas y, según el promedio, la persona queda clasificada en uno de cuatro niveles: No logrado, Logrado en parte, Logrado o Superado.</div>
+              <div><strong>Calificación de comportamientos</strong> — Se usa el puntaje total que el sistema ya calculó para las 9 preguntas de comportamiento (0 a 100). Según ese puntaje, la persona queda clasificada en uno de tres niveles: 0–39 No logrado, 40–72 Logrado en parte, 73–100 Logrado.</div>
             </div>
             <div class="need-item">
               <span class="need-icon">🤝</span>
@@ -821,7 +824,7 @@ function switchTab(tab) {
   document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
 }
 
-let DB = { usuarios: [], evaluados: [], objetivos: [] };
+let DB = { usuarios: [], evaluados: [], objetivos: [], autoevaluaciones: [] };
 let charts = {};
 
 /* ══ UPLOAD LOGIC ══ */
@@ -864,13 +867,14 @@ function handleFile(file) {
       const usuariosRaw  = findSheet(['usuario', 'nómina', 'nomina']);
       const evalDescRaw  = findSheet(['descendente', 'desc']);
       const objetivosRaw = findSheet(['objetivo']);
+      const autoevalRaw  = findSheet(['autoevaluac']); // opcional — no bloquea la carga si falta
 
       if (!usuariosRaw)  { showError('No se encontró la pestaña "Usuarios evaluados"'); return; }
       if (!evalDescRaw)  { showError('No se encontró la pestaña "Evaluación descendente"'); return; }
       if (!objetivosRaw) { showError('No se encontró la pestaña "Objetivos"'); return; }
 
       loadingFill.style.width = '85%';
-      parseData(usuariosRaw, evalDescRaw, objetivosRaw);
+      parseData(usuariosRaw, evalDescRaw, objetivosRaw, autoevalRaw);
       loadingFill.style.width = '100%';
       setTimeout(() => showDashboard(), 300);
     } catch(err) {
@@ -901,7 +905,7 @@ function findCol(row, keywords) {
   return null;
 }
 
-function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
+function parseData(usuariosRaw, evalDescRaw, objetivosRaw, autoevalRaw) {
   const uRow = usuariosRaw[0] || {};
   const colNombre   = findCol(uRow, ['nombre y apellido', 'nombre']);
   const colUsername = findCol(uRow, ['usuario']);
@@ -911,6 +915,13 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
   const colDepto    = findCol(uRow, ['departamento']);
   const colEstado   = findCol(uRow, ['estado de usuario', 'estado']);
   const colSucursal = findCol(uRow, ['agrupador sucursal', 'sucursal']);
+  const colPuntajeObj  = findCol(uRow, ['puntaje de objetivos', 'puntaje objetivos']);
+  const colPuntajePreg = findCol(uRow, ['puntaje de preguntas', 'puntaje preguntas']);
+
+  const parsePct = v => {
+    const s = (v ?? '').toString().replace('%','').replace(',','.').trim();
+    return s !== '' && !isNaN(parseFloat(s)) ? parseFloat(s) : null;
+  };
 
   DB.usuarios = usuariosRaw.map(r => ({
     nombre:   (r[colNombre]   || '').toString().trim(),
@@ -921,6 +932,8 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
     depto:    (r[colDepto]    || '').toString().trim(),
     estado:   (r[colEstado]   || '').toString().trim(),
     sucursal: (r[colSucursal] || '').toString().trim(),
+    puntajeObjetivos: parsePct(r[colPuntajeObj]),
+    puntajePreguntas: parsePct(r[colPuntajePreg]),
   })).filter(u => u.nombre);
 
   const eRow = evalDescRaw[0] || {};
@@ -928,6 +941,7 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
   // 'Evaluado' col contiene el CUIL — buscar match exacto para no confundir con "[Evaluado]\nNombre..."
   const colEvUsername = Object.keys(eRow).find(k => k.trim().toLowerCase() === 'evaluado') || findCol(eRow, ['evaluado']);
   const colEvEstado   = findCol(eRow, ['estado de evaluación', 'estado']);
+  const colEvPuntaje  = findCol(eRow, ['puntaje']);
   const comportCols   = Object.keys(eRow).filter(k => {
     const nk = normalizeKey(k);
     return /^\d+\./.test(nk) || nk.includes('pasión') || nk.includes('eficiencia') || nk.includes('servicio');
@@ -943,8 +957,25 @@ function parseData(usuariosRaw, evalDescRaw, objetivosRaw) {
       username: (r[colEvUsername] || '').toString().trim(),
       estado:   (r[colEvEstado]   || '').toString().trim(),
       comportamientos: comps,
+      puntaje:  parsePct(r[colEvPuntaje]),
     };
   }).filter(e => e.nombre);
+
+  // Autoevaluación (opcional): misma estructura de nombre/usuario que Evaluación descendente.
+  DB.autoevaluaciones = [];
+  if (autoevalRaw && autoevalRaw.length) {
+    const aRow = autoevalRaw[0] || {};
+    const colAuNombre   = findCol(aRow, ['nombre y apellido', 'nombre']);
+    const colAuUsername = Object.keys(aRow).find(k => k.trim().toLowerCase() === 'evaluado')
+      || findCol(aRow, ['evaluado', 'usuario']);
+    const colAuPuntaje  = findCol(aRow, ['puntaje']);
+
+    DB.autoevaluaciones = autoevalRaw.map(r => ({
+      nombre:   (r[colAuNombre]   || '').toString().trim(),
+      username: (r[colAuUsername] || '').toString().trim(),
+      puntaje:  parsePct(r[colAuPuntaje]),
+    })).filter(a => a.nombre);
+  }
 
   const oRow = objetivosRaw[0] || {};
   const colOUsername = findCol(oRow, ['[responsable]\nusuario', 'usuario']);
@@ -973,11 +1004,18 @@ const SCALE_COLORS = {
   'Superado':        { bg: '#dae1dc', text: '#365447', chart: '#365447' },
 };
 
+// Escala de 3 niveles para el promedio (1–4) de preguntas por dimensión.
 function comportToLabel(avg) {
   if (avg <= 1.5) return 'No logrado';
   if (avg <= 2.5) return 'Logrado en parte';
-  if (avg <= 3.5) return 'Logrado';
-  return 'Superado';
+  return 'Logrado';
+}
+// Escala de 3 niveles para "Puntaje de Preguntas" (Usuarios evaluados), 0–100.
+const COMP_SCALE = ['No logrado','Logrado en parte','Logrado'];
+function puntajePreguntasToLabel(score) {
+  if (score <= 39) return 'No logrado';
+  if (score <= 72) return 'Logrado en parte';
+  return 'Logrado';
 }
 function progresoToLabel(pct) {
   if (pct < 40)  return 'No logrado';
@@ -989,25 +1027,43 @@ function badgeClass(label) {
   return { 'No logrado':'badge-nl','Logrado en parte':'badge-lp','Logrado':'badge-l','Superado':'badge-s' }[label] || '';
 }
 
-function getEvalData(u) {
+// Estado de la evaluación descendente (no el de la hoja "Usuarios evaluados").
+// Si no hay fila para ese colaborador en Evaluación descendente, se considera "Sin iniciar".
+function getEvDescEstado(u) {
   const ev = u.username
     ? (DB.evaluados.find(e => e.username === u.username) || DB.evaluados.find(e => e.nombre === u.nombre))
     : DB.evaluados.find(e => e.nombre === u.nombre);
-  const objs = u.username
-    ? DB.objetivos.filter(o => o.username === u.username || (!o.username && o.nombre === u.nombre))
-    : DB.objetivos.filter(o => o.nombre === u.nombre);
+  return ev && ev.estado ? ev.estado : 'Sin iniciar';
+}
 
+// Calificación final obtenida en Evaluación descendente (columna "Puntaje").
+function getEvDescPuntaje(u) {
+  const ev = u.username
+    ? (DB.evaluados.find(e => e.username === u.username) || DB.evaluados.find(e => e.nombre === u.nombre))
+    : DB.evaluados.find(e => e.nombre === u.nombre);
+  return ev && ev.puntaje !== null && ev.puntaje !== undefined ? ev.puntaje : null;
+}
+
+// Calificación obtenida en Autoevaluación (columna "Puntaje"). Hoja opcional.
+function getAutoevalPuntaje(u) {
+  const a = u.username
+    ? (DB.autoevaluaciones.find(x => x.username === u.username) || DB.autoevaluaciones.find(x => x.nombre === u.nombre))
+    : DB.autoevaluaciones.find(x => x.nombre === u.nombre);
+  return a && a.puntaje !== null && a.puntaje !== undefined ? a.puntaje : null;
+}
+
+function getEvalData(u) {
   let objLabel = null, objPct = null, compLabel = null;
 
-  if (ev && ev.comportamientos.length) {
-    const avg = ev.comportamientos.reduce((a,b)=>a+b,0)/ev.comportamientos.length;
-    compLabel = comportToLabel(avg);
+  // Calificación de comportamientos: viene directo de "Puntaje de Preguntas"
+  // (Usuarios evaluados), ya calculado por el sistema — no se recalcula acá.
+  if (u.puntajePreguntas !== null && u.puntajePreguntas !== undefined) {
+    compLabel = puntajePreguntasToLabel(u.puntajePreguntas);
   }
-  if (objs.length) {
-    const totalPeso = objs.reduce((a,o) => a + o.peso, 0);
-    objPct = totalPeso > 0
-      ? objs.reduce((a,o) => a + o.progreso * o.peso, 0) / totalPeso
-      : objs.reduce((a,o) => a + o.progreso, 0) / objs.length;
+  // % de cumplimiento de objetivos: viene directo de "Puntaje de Objetivos"
+  // (Usuarios evaluados), ya calculado por el sistema — no se recalcula acá.
+  if (u.puntajeObjetivos !== null && u.puntajeObjetivos !== undefined) {
+    objPct = u.puntajeObjetivos;
     objLabel = progresoToLabel(objPct);
   }
   return { compLabel, objLabel, objPct };
@@ -1036,9 +1092,10 @@ function renderAll() {
 
 function renderKPIs() {
   const total = filtered.length;
-  const ev    = filtered.filter(u => u.estado === 'Finalizado' || u.estado === 'Finalizada').length;
-  const curso = filtered.filter(u => u.estado === 'En curso').length;
-  const sinI  = filtered.filter(u => u.estado === 'Sin iniciar').length;
+  const estados = filtered.map(getEvDescEstado);
+  const ev    = estados.filter(e => e === 'Finalizado' || e === 'Finalizada').length;
+  const curso = estados.filter(e => e === 'En curso').length;
+  const sinI  = total - ev - curso;
   const pct   = total > 0 ? Math.round(ev/total*100) : 0;
 
   document.getElementById('kpiGrid').innerHTML = `
@@ -1125,16 +1182,16 @@ function renderCharts() {
   renderObjNumerico(evUsers);
 
   const compDist = calcDist(evUsers, 'comp');
-  const colors = SCALE.map(l => SCALE_COLORS[l].chart);
+  const colors = COMP_SCALE.map(l => SCALE_COLORS[l].chart);
 
-  document.getElementById('legComp').innerHTML = SCALE.map((l,i) =>
+  document.getElementById('legComp').innerHTML = COMP_SCALE.map((l,i) =>
     `<div class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} <strong>(${compDist[l]})</strong></div>`
   ).join('');
 
   if (charts['chartComp']) charts['chartComp'].destroy();
   charts['chartComp'] = new Chart(document.getElementById('chartComp'), {
     type: 'doughnut',
-    data: { labels: SCALE, datasets: [{ data: SCALE.map(l => compDist[l]), backgroundColor: colors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }] },
+    data: { labels: COMP_SCALE, datasets: [{ data: COMP_SCALE.map(l => compDist[l]), backgroundColor: colors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }] },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '65%',
       plugins: {
@@ -1160,12 +1217,12 @@ function renderTablaDimensiones() {
 
   if (!evUsers.length) {
     document.getElementById('tbDimensiones').innerHTML =
-      `<tr><td colspan="7" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+      `<tr><td colspan="6" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
     return;
   }
 
   document.getElementById('tbDimensiones').innerHTML = DIMENSIONES.map(dim => {
-    const dist = { 'No logrado':0,'Logrado en parte':0,'Logrado':0,'Superado':0 };
+    const dist = { 'No logrado':0,'Logrado en parte':0,'Logrado':0 };
     let sumAvg = 0, count = 0;
 
     evUsers.forEach(u => {
@@ -1183,8 +1240,9 @@ function renderTablaDimensiones() {
     const globalLabel = count > 0 ? comportToLabel(sumAvg/count) : null;
 
     const pct = v => total > 0 ? Math.round(v/total*100) : 0;
-    const segColors = ['#b86a5a','#c9a66b','#7a8a5a','#365447'];
-    const segWidths = SCALE.map(l => pct(dist[l]));
+    const dimScale = ['No logrado','Logrado en parte','Logrado'];
+    const segColors = ['#b86a5a','#c9a66b','#7a8a5a'];
+    const segWidths = dimScale.map(l => pct(dist[l]));
 
     const avgBadge = globalLabel
       ? `<span class="badge ${badgeClass(globalLabel)}" style="font-family:var(--brand-sans);font-weight:500;">${globalAvg}</span>`
@@ -1206,7 +1264,6 @@ function renderTablaDimensiones() {
       <td><span class="dim-count" style="color:var(--nl-text);">${dist['No logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['No logrado'])}%)</span></span></td>
       <td><span class="dim-count" style="color:var(--lp-text);">${dist['Logrado en parte']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado en parte'])}%)</span></span></td>
       <td><span class="dim-count" style="color:var(--l-text);">${dist['Logrado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Logrado'])}%)</span></span></td>
-      <td><span class="dim-count" style="color:var(--s-text);">${dist['Superado']} <span style="color:var(--text-muted);font-weight:400;">(${pct(dist['Superado'])}%)</span></span></td>
     </tr>`;
   }).join('');
 }
@@ -1220,7 +1277,7 @@ function renderTablaArea() {
   const areas = [...new Set(filtered.map(u => u.area).filter(Boolean))].sort();
   document.getElementById('tbArea').innerHTML = areas.length ? areas.map(a => {
     const au = filtered.filter(u => u.area === a);
-    const ae = au.filter(u => u.estado === 'Finalizado' || u.estado === 'Finalizada').length;
+    const ae = au.filter(u => { const e = getEvDescEstado(u); return e === 'Finalizado' || e === 'Finalizada'; }).length;
     const pct = au.length > 0 ? Math.round(ae/au.length*100) : 0;
     const objAvg = avgObjPct(au);
     const objCell = objAvg !== null
@@ -1240,7 +1297,7 @@ function renderTablaDepto() {
   const deptos = [...new Set(filtered.map(u => u.depto).filter(Boolean))].sort();
   document.getElementById('tbDepto').innerHTML = deptos.length ? deptos.map(d => {
     const du = filtered.filter(u => u.depto === d);
-    const de = du.filter(u => u.estado === 'Finalizado' || u.estado === 'Finalizada').length;
+    const de = du.filter(u => { const e = getEvDescEstado(u); return e === 'Finalizado' || e === 'Finalizada'; }).length;
     const pct = du.length > 0 ? Math.round(de/du.length*100) : 0;
     const area = du[0]?.area || '';
     const objAvg = avgObjPct(du);
@@ -1261,9 +1318,10 @@ function renderTablaDepto() {
 function renderTablaColaboradores() {
   document.getElementById('tbColaboradores').innerHTML = filtered.length ? filtered.map(u => {
     const { compLabel, objLabel, objPct } = getEvalData(u);
-    const estadoBadge = u.estado === 'Finalizado' || u.estado === 'Finalizada'
+    const estadoDesc = getEvDescEstado(u);
+    const estadoBadge = estadoDesc === 'Finalizado' || estadoDesc === 'Finalizada'
       ? '<span class="badge badge-l">Finalizado</span>'
-      : u.estado === 'En curso'
+      : estadoDesc === 'En curso'
       ? '<span class="badge badge-lp">En curso</span>'
       : '<span class="badge badge-nl">Sin iniciar</span>';
     const pctCell = objPct !== null && objPct !== undefined
@@ -1272,6 +1330,14 @@ function renderTablaColaboradores() {
     const badgeCell = objLabel
       ? `<span class="badge ${badgeClass(objLabel)}">${objLabel}</span>`
       : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+    const califFinal = getEvDescPuntaje(u);
+    const califFinalCell = califFinal !== null
+      ? `<span style="font-family:var(--brand-mono,'DM Mono',monospace);font-size:13px;font-weight:600;color:var(--text-primary);">${Math.round(califFinal)}%</span>`
+      : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+    const autoeval = getAutoevalPuntaje(u);
+    const autoevalCell = autoeval !== null
+      ? `<span style="font-family:var(--brand-mono,'DM Mono',monospace);font-size:13px;font-weight:600;color:var(--text-primary);">${Math.round(autoeval)}%</span>`
+      : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
     return `<tr>
       <td><strong>${u.nombre}</strong></td>
       <td><span class="area-tag">${u.area}</span></td>
@@ -1279,15 +1345,18 @@ function renderTablaColaboradores() {
       <td>${estadoBadge}</td>
       <td>${pctCell}</td>
       <td>${compLabel ? `<span class="badge ${badgeClass(compLabel)}">${compLabel}</span>` : '<span style="color:var(--text-muted);font-size:12px;">—</span>'}</td>
+      <td>${califFinalCell}</td>
+      <td>${autoevalCell}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="6" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
+  }).join('') : `<tr><td colspan="8" class="empty-state">No hay datos con los filtros seleccionados</td></tr>`;
 }
 
 /* ══ SIN INICIAR MODAL ══ */
 function exportarSinIniciar() {
-  const sinIniciar = filtered.filter(u =>
-    u.estado !== 'Finalizado' && u.estado !== 'Finalizada' && u.estado !== 'En curso'
-  );
+  const sinIniciar = filtered.filter(u => {
+    const e = getEvDescEstado(u);
+    return e !== 'Finalizado' && e !== 'Finalizada' && e !== 'En curso';
+  });
   const rows = [['Colaborador', 'Área', 'Departamento', 'Líder']];
   sinIniciar.forEach(u => rows.push([u.nombre, u.area, u.depto || '', u.jefe || '']));
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -1298,9 +1367,10 @@ function exportarSinIniciar() {
 }
 
 function openSinIniciarModal() {
-  const sinIniciar = filtered.filter(u =>
-    u.estado !== 'Finalizado' && u.estado !== 'Finalizada' && u.estado !== 'En curso'
-  );
+  const sinIniciar = filtered.filter(u => {
+    const e = getEvDescEstado(u);
+    return e !== 'Finalizado' && e !== 'Finalizada' && e !== 'En curso';
+  });
   const n = sinIniciar.length;
   document.getElementById('modalSinIniciarCount').textContent =
     `${n} colaborador${n !== 1 ? 'es' : ''} pendiente${n !== 1 ? 's' : ''}`;
@@ -1351,7 +1421,7 @@ function showDashboard() {
 }
 
 function resetDashboard() {
-  DB = { usuarios: [], evaluados: [], objetivos: [] };
+  DB = { usuarios: [], evaluados: [], objetivos: [], autoevaluaciones: [] };
   Object.values(charts).forEach(c => c.destroy());
   charts = {};
   selectedLider = '';
