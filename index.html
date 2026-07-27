@@ -516,6 +516,7 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
       <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
         <button class="tab-btn" onclick="switchTab('needs')">Necesidades del cliente</button>
+        <button class="tab-btn" onclick="switchTab('changelog')">Log de Cambios</button>
       </div>
     </div>
     <div class="topbar-right">
@@ -707,6 +708,52 @@ tbody tr:hover td { background: rgba(0,0,0,0.02); }
     </div>
   </div>
 
+  <!-- ══ TAB: LOG DE CAMBIOS ══ -->
+  <div id="tab-changelog" class="main" style="display:none;">
+    <div style="max-width:760px;">
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Log de cambios</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Historial de ajustes realizados sobre este dashboard, en orden del más reciente al más antiguo.</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+        <div class="needs-group">
+          <div class="needs-group-title">20/07/2026</div>
+          <div class="needs-list">
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Solapa "Log de Cambios"</strong> — Se agrega esta pestaña para documentar los ajustes hechos sobre el dashboard.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Nuevas columnas en Detalle por colaborador</strong> — "Calificación final" (columna "Puntaje" de Evaluación descendente) y "Autoevaluación" (columna "Puntaje" de la pestaña opcional Autoevaluación).</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación por dimensión sin "Superado"</strong> — Pasa a una escala de 3 niveles (No logrado / Logrado en parte / Logrado); lo que antes caía en "Superado" ahora se cuenta como "Logrado".</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Calificación de comportamientos</strong> — Ahora usa la columna "Puntaje de Preguntas" de Usuarios evaluados (escala de 3 niveles: 0–39 No logrado, 40–72 Logrado en parte, 73–100 Logrado), en vez de promediar las 9 preguntas de Evaluación descendente.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Cumplimiento de objetivos</strong> — Ahora usa la columna "Puntaje de Objetivos" de Usuarios evaluados (tarjeta, Área, Departamento y Colaboradores), corrigiendo porcentajes que superaban el 100% por mezclar objetivos de evaluación descendente y autoevaluación.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Estado de avance</strong> — Los KPIs, tablas de Área/Departamento/Colaboradores y el listado de "Sin iniciar" ahora toman el estado desde la pestaña Evaluación descendente en vez de Usuarios evaluados.</div></div>
+          </div>
+        </div>
+
+        <div class="needs-group">
+          <div class="needs-group-title">10/07/2026</div>
+          <div class="needs-list">
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Explicación de KPIs</strong> — Se agrega a "Necesidades del cliente" una guía en lenguaje simple de cómo se calcula cada indicador del dashboard.</div></div>
+          </div>
+        </div>
+
+        <div class="needs-group">
+          <div class="needs-group-title">11/05/2026</div>
+          <div class="needs-list">
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Modal "Sin iniciar"</strong> — Se agranda el listado de personas sin completar y se agrega la opción de descargarlo en Excel.</div></div>
+            <div class="need-item need-done"><span class="need-icon">✓</span><div><strong>Donut de objetivos</strong> — Fix de visualización en el mini dashboard.</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;padding:12px 16px;background:var(--brand-light);border-radius:var(--radius-sm);border-left:3px solid var(--brand-mid);">
+        <div style="font-size:12px;color:var(--brand);font-weight:500;margin-bottom:4px;">Nota</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Este log se actualiza a mano con cada entrega. El historial técnico completo (línea por línea) queda siempre disponible en el repositorio de GitHub del proyecto.</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══ SIN INICIAR MODAL ══ -->
@@ -820,6 +867,7 @@ document.addEventListener('click', e => {
 function switchTab(tab) {
   document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
   document.getElementById('tab-needs').style.display = tab === 'needs' ? 'block' : 'none';
+  document.getElementById('tab-changelog').style.display = tab === 'changelog' ? 'block' : 'none';
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
 }
